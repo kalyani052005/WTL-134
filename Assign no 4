@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insert/Delete Student</title>
+</head>
+<body>
+    <div>
+        <form>
+            Enter your name: <input type="text" id="id1" name="studentname">
+            Enter student marks: <input type="text" id="id2" name="studentmarks">
+            <button id="btn" type="button">Insert</button>
+            <button id="deletebtn" type="button">Delete</button>
+        </form>
+    </div>
+
+    <script>
+        async function senddata(){
+            let x = document.getElementById("id1").value;
+            let y = document.getElementById("id2").value;
+
+            let formdata1 = new FormData();
+            formdata1.append("studentname", x);
+            formdata1.append("studentmarks", y);
+
+            let response = await fetch("http://localhost/testing_learn_php/getdata1.php", {
+                method: "POST",
+                body: formdata1
+            });
+
+            let data = await response.text();
+            console.log(data);
+            alert(data);
+        }
+
+        async function deletedata(){
+            let x = document.getElementById("id1").value; // delete by name
+
+            let formdata2 = new FormData();
+            formdata2.append("studentname", x);
+
+            let response = await fetch("http://localhost/testing_learn_php/delete.php", {
+                method: "POST",
+                body: formdata2
+            });
+
+            let data = await response.text();
+            console.log(data);
+            alert(data);
+        }
+
+        document.getElementById("btn").addEventListener("click", () => {
+            senddata();
+        });
+
+        document.getElementById("deletebtn").addEventListener("click", () => {
+            deletedata();
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+<?php
+$name=$_POST["studentname"];
+$marks=$_POST["studentmarks"];
+$conn=new mysqli("localhost","root","","studentdb");
+if($conn){
+    $stat=$conn->prepare("insert into student(studentname,studentmarks) values(?,?)");
+    $stat->bind_param("si",$name,$marks);
+    if($stat->execute())
+    {
+        echo"data inserted successfully";
+    }
+    else
+    {
+        echo"error has during insertion";
+    }
+
+}
+else{
+    echo"error in connection";
+}
+
+//$arr=["studentname"=>$name,"studentmarks"=>$marks];
+//$response=json_encode($arr);
+//header('Content-Type: application/json');
+//echo $response;
+
+?>
+
+
+
+
+<?php
+$name = $_POST["studentname"];
+
+$conn = new mysqli("localhost", "root", "", "studentdb");
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$stat = $conn->prepare("DELETE FROM student WHERE studentname = ?");
+$stat->bind_param("s", $name);
+
+if ($stat->execute()) {
+    if ($stat->affected_rows > 0) {
+        echo "Record deleted successfully";
+    } else {
+        echo "No record found with that name";
+    }
+} else {
+    echo "Error during deletion: " . $conn->error;
+}
+
+$conn->close();
+?>
