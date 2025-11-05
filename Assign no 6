@@ -1,0 +1,31 @@
+import React, { useState } from "react";
+
+function Student({ name, course, marks }) {
+  // Local state using useState hook
+  const [likes, setLikes] = useState(0);
+
+  function increaseLikes() {
+    setLikes(likes + 1);
+  }
+
+  return (
+    <div
+      style={{
+        border: "2px solid gray",
+        margin: "10px",
+        padding: "10px",
+        borderRadius: "10px",
+        width: "300px",
+        display: "inline-block",
+      }}
+    >
+      <h3>Name: {name}</h3>
+      <p>Course: {course}</p>
+      <p>Marks: {marks}</p>
+      <p>👍 Likes: {likes}</p>
+      <button onClick={increaseLikes}>Like</button>
+    </div>
+  );
+}
+
+export default Student;
