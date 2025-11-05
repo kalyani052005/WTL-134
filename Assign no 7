@@ -1,0 +1,49 @@
+import { useState } from "react";
+import axios from "axios"; // Import axios
+
+function Fetch() {
+  const [data, setData] = useState([]);
+
+  async function getData() {
+    try {
+      // Using axios instead of fetch
+      const res = await axios.get("https://jsonplaceholder.typicode.com/posts");
+      setData(res.data); // Axios stores response data in res.data
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  return (
+    <div>
+      <h1>Axios API Example</h1>
+      <button onClick={getData}>Get Data</button>
+
+      {/* Show table only after data is fetched */}
+      {data.length > 0 && (
+        <table border="1">
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Body</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item) => (
+              <tr key={item.id}>
+                <td>{item.userId}</td>
+                <td>{item.id}</td>
+                <td>{item.title}</td>
+                <td>{item.body}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
+export default Fetch;
